@@ -70,14 +70,6 @@ function returnBadArguments(fn) {
     }
 
     for (var i = 1; i < arguments.length; i++) {
-        // try {
-        //     if (fn(arguments[i])) {
-        //         throw new Error();
-        //     }
-        // } catch (e) {
-        //     exception.push(arguments[i]);
-        // }
-
         try {
             if (fn(arguments[i])) {
                 throw new Error();
@@ -104,6 +96,7 @@ function returnBadArguments(fn) {
  - number не является числом (с текстом "number is not a number")
  - какой-либо из аргументов div является нулем (с текстом "division by 0")
  */
+ 
 function calculator(number) {
     var number = number || 0;
 
