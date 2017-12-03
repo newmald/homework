@@ -50,7 +50,7 @@ function reduce(array, fn, initial) {
  Функция должна удалить указанное свойство из указанного объекта
  */
 function deleteProperty(obj, prop) {
-    delete(obj[prop]);
+    delete obj[prop];
 }
 
 /*
@@ -59,11 +59,7 @@ function deleteProperty(obj, prop) {
  Функция должна проверить существует ли укзаанное свойство в указанном объекте
  */
 function hasProperty(obj, prop) {
-    if (obj[prop]) {
-        return true;
-    }
-
-    return false;
+    return obj.hasOwnProperty(prop);
 }
 
 /*
@@ -71,9 +67,7 @@ function hasProperty(obj, prop) {
  Функция должна получить все перечисляемые свойства объекта и вернуть их в виде массива
  */
 function getEnumProps(obj) {
-    var arr = Object.keys(obj);
-
-    return arr;
+    return Object.keys(obj);
 }
 
 /*
@@ -100,7 +94,7 @@ function upperProps(obj) {
 function slice(array, from, to) {
     var arr = [];
     var begin = from || 0;
-    var end = (typeof to !== 'undefined') ? to : array.length;
+    var end = typeof to !== 'undefined' ? to : array.length;
 
     if (begin < array.length && Math.abs(begin) > array.length ) {
         begin = 0;
