@@ -9,7 +9,7 @@
  * @return {Window}
  */
 function createWindow(name, width, height) {
-    return window.open(name, width, height);
+    return window.open('', '_blank', name, 'width=' + width + ', height=' + height);
 }
 
 /**
