@@ -9,7 +9,7 @@
 function createDivWithText(text) {
     var div = document.createElement('div');
 
-    div.textContent = text;
+    div.textContent = text; 
 
     return div;
 }
