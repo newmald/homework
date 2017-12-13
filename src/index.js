@@ -9,7 +9,7 @@
 function createDivWithText(text) {
     var div = document.createElement('div');
 
-    div.textContent = text; 
+    div.textContent = text;
 
     return div;
 }
@@ -124,7 +124,7 @@ function deleteTextNodesRecursive(where) {
         if (whereNodes[i].nodeType === 3) {
             where.removeChild(whereNodes[i]);
             i--;
-        } else {
+        } else if (whereNodes[i].childNodes.length > 0) {  /// !!!!!!!!!!!!!!!!!!
             deleteTextNodesRecursive(whereNodes[i]);
         }
     }
@@ -152,7 +152,28 @@ function deleteTextNodesRecursive(where) {
  *   texts: 3
  * }
  */
-function collectDOMStat(root) {
+function collectDOMStat(root, obj) {
+    var rootNodes = root.childNodes;
+
+    if (!obj) {
+        obj = { tags: {}, classes: {}, texts: 0 }
+    }
+
+    for (var key of rootNodes) {
+        if (key.nodeType === 3) {
+            obj.texts++;
+        } else if (key.nodeType === 1) {
+            obj.tags[key.tagName] = key.tagName in obj.tags ? ++obj.tags[key.tagName] : 1;
+            [...key.classList].forEach(function(item) {
+                obj.classes[item] = item in obj.classes ? ++obj.classes[item] : 1;
+            });
+        }
+        if (key.childNodes.length > 0) {
+            collectDOMStat(key, obj);
+        }
+    }
+
+    return obj;
 }
 
 /**
@@ -187,6 +208,25 @@ function collectDOMStat(root) {
  * }
  */
 function observeChildNodes(where, fn) {
+    var obj = {};
+    var observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            if (mutation.addedNodes.length > 0) {
+                obj.type = 'insert';
+                obj.nodes = [...mutation.addedNodes];
+                fn(obj);
+            }
+            if (mutation.removedNodes.length > 0) {
+                obj.type = 'remove';
+                obj.nodes = [...mutation.removedNodes];
+                fn(obj);
+            }
+        });
+    });
+
+    var config = { subtree: true, childList: true };
+
+    observer.observe(where, config);
 }
 
 export {
