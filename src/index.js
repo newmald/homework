@@ -172,7 +172,7 @@ function collectDOMStat(root, obj) {
             collectDOMStat(key, obj);
         }
     }
-
+	
     return obj;
 }
 
