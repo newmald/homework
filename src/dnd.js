@@ -23,6 +23,33 @@ let homeworkContainer = document.querySelector('#homework-container');
  * @return {Element}
  */
 function createDiv() {
+    var div = document.createElement('div');
+
+    div.setAttribute('class', 'draggable-div');
+
+    function randomSize(min, max) {
+        return Math.floor(Math.random() * (max - min)) + min;
+    }
+
+    function randomColor() {
+        var letters = '0123456789ABCDEF'.split('');
+        var color = '#';
+
+        for (var i = 0; i < 6; i++ ) {
+            color += letters[Math.round(Math.random() * 15)];
+        }
+
+        return color;
+    }
+
+    div.style.position = 'absolute';
+    div.style.width = randomSize(10, 100) + 'px';
+    div.style.height = randomSize(10, 100) + 'px';
+    div.style.backgroundColor = randomColor();
+    div.style.top = randomSize(0, 1000) + 'px';
+    div.style.left = randomSize(0, 1000) + 'px';
+
+    return div;
 }
 
 /**
@@ -31,6 +58,29 @@ function createDiv() {
  * @param {Element} target
  */
 function addListeners(target) {
+    let activeDiv,
+        offsetX = 0,
+        offsetY = 0,
+        mouseDown = (e) => {
+            if (e.which === 1) {
+                activeDiv = e.target;
+                offsetX = e.offsetX;
+                offsetY = e.offsetY;
+            }
+        },
+        mouseUp = (e) => activeDiv = null,
+        mouseMove = (e) => {
+            if (activeDiv) {
+                activeDiv.style.top = (e.clientY - offsetY) + 'px';
+                activeDiv.style.left = (e.clientX - offsetX) + 'px';
+            }
+        };
+
+    target.ondragstart = () => false;
+
+    target.addEventListener('mousedown', mouseDown);
+    target.addEventListener('mouseup', mouseUp);
+    document.addEventListener('mousemove', mouseMove);
 }
 
 let addDivButton = homeworkContainer.querySelector('#addDiv');
