@@ -7,14 +7,10 @@
  * @return {Promise}
  */
 function delayPromise(seconds) {
-    var promise = new Promise(function(resolve, reject) {
+    return new Promise(function(resolve, reject) {
         setTimeout(function() {
             resolve();
         }, seconds * 1000);
-    });
-
-    return promise.then(function() {
-        // какой-то код
     });
 }
 
@@ -30,7 +26,6 @@ function loadAndSortTowns() {
         const xhr = new XMLHttpRequest();
 
         xhr.open('GET', 'https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json');
-        xhr.send();
         xhr.addEventListener('load', function() {
             var towns = JSON.parse(xhr.response);
 
@@ -44,6 +39,7 @@ function loadAndSortTowns() {
 
             resolve(towns);
         });
+        xhr.send();
     });
 }
 

@@ -36,6 +36,29 @@ let homeworkContainer = document.querySelector('#homework-container');
  * @return {Promise<Array<{name: string}>>}
  */
 function loadTowns() {
+    return new Promise(function(resolve, reject) {
+        const xhr = new XMLHttpRequest();
+
+        xhr.open('GET', 'https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json');
+        xhr.addEventListener('load', function() {
+            var towns = JSON.parse(xhr.response);
+
+            towns.sort(function(a, b) {
+                if (a.name < b.name) {
+                    return -1;
+                } else if (a.name > b.name) {
+                    return 1;
+                }
+            });
+
+            if (xhr.status === 200) {
+                resolve(towns);
+            } else {
+                reject();
+            }
+        });
+        xhr.send();
+    });
 }
 
 /**
@@ -51,16 +74,59 @@ function loadTowns() {
  *
  * @return {boolean}
  */
+
 function isMatching(full, chunk) {
+    if (~full.toLowerCase().indexOf(chunk.toLowerCase())) {
+        return true;
+    }
+
+    return false;
 }
 
 let loadingBlock = homeworkContainer.querySelector('#loading-block');
 let filterBlock = homeworkContainer.querySelector('#filter-block');
 let filterInput = homeworkContainer.querySelector('#filter-input');
 let filterResult = homeworkContainer.querySelector('#filter-result');
-let townsPromise;
+let findTown = [];
+
+let loadPage = (towns) => {
+    loadingBlock.style.display = 'none';
+    filterBlock.style.display = 'block';
+    findTown = towns;
+};
+
+let loadError = () => {
+    let resetButton = document.createElement('button');
+
+    loadingBlock.style.display = 'block';
+    loadingBlock.innerHTML = 'Не удалось загрузить города';
+    resetButton.innerHTML = 'Повторить';
+    loadingBlock.appendChild(resetButton);
+    filterBlock.style.display = 'none';
+    resetButton.addEventListener('click', function() {
+        loadingBlock.innerHTML = 'Загрузка...';
+        loadTowns().then(loadPage, loadError);
+    });
+};
+
+loadTowns().then(loadPage, loadError);
 
 filterInput.addEventListener('keyup', function() {
+    let customText = filterInput.value.trim();
+
+    filterResult.innerHTML = '';
+
+    for (let i = 0; i < findTown.length; i++) {
+        let nameTown = document.createElement('div');
+
+        if (isMatching(findTown[i].name, customText)) {
+            nameTown.innerHTML = findTown[i].name;
+            filterResult.appendChild(nameTown);
+        }
+        if (customText === '') {
+            filterResult.innerHTML = '';
+        }
+    }
 });
 
 export {
